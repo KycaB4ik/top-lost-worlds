@@ -12,10 +12,10 @@ export default function Home() {
 
         const names = Object.keys(data.columns);
         const processed = names.map((name) => {
-          const scores = data.columns[name]
-            .filter((v) => v !== "" && v !== null && v !== undefined) // исключаем пустые строки
-.map((v) => parseInt(v))                                  // преобразуем в число
-.filter((v) => !isNaN(v));                                 // фильтруем плохие числа
+          const scores = rawScores
+  .filter((v) => /^\d+$/.test(v)) // только строки, состоящие из цифр
+  .map((v) => parseInt(v));
+
 
 
           const totalGames = scores.length;
