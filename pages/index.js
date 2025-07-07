@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 
 export default function Home() {
@@ -10,62 +9,31 @@ export default function Home() {
       .then((data) => {
         if (!data.columns) return;
 
-        const names = Object.keys(data.columns);
-        const processed = names.map((name) => {
-          const rawScores = data.columns[name];
-
-          // Удаляем пустые ячейки и нечисловые значения
+        const processed = Object.entries(data.columns).map(([name, rawScores]) => {
           const scores = rawScores
-            .filter((v) => /^\d+$/.test(v)) // оставляем только числа как строки
+            .filter((v) => /^\d+$/.test(v)) // только строки-числа
             .map((v) => parseInt(v));
 
-          const totalGames = scores.length;
-          const average = totalGames
-            ? (scores.reduce((a, b) => a + b, 0) / totalGames).toFixed(1)
-            : 0;
-          const maxScore = Math.max(...scores, 0);
+          const games = scores.length;
+          const average = games ? (scores.reduce((a, b) => a + b, 0) / games).toFixed(1) : 0;
+          const max = Math.max(...scores, 0);
 
-          return {
-            name,
-            games: totalGames,
-            average: parseFloat(average),
-            max: maxScore,
-          };
+          return { name, games, average, max };
         });
 
         setPlayers(processed);
       });
   }, []);
 
-  const sortBy = (key) => [...players].sort((a, b) => b[key] - a[key]);
-
   return (
-    <div style={{ padding: 20, fontFamily: "sans-serif" }}>
-      <h1 style={{ textAlign: "center" }}>TOP Lost Worlds</h1>
+    <div style={{ padding: 20 }}>
+      <h1>📊 TOP Lost Worlds</h1>
 
-      <h2>🏆 Средний результат</h2>
+      <h2>👾 Игроки</h2>
       <ul>
-        {sortBy("average").map((p) => (
+        {players.map((p) => (
           <li key={p.name}>
-            {p.name}: {p.average}
-          </li>
-        ))}
-      </ul>
-
-      <h2>📜 Рекорды</h2>
-      <ul>
-        {sortBy("max").map((p) => (
-          <li key={p.name}>
-            {p.name}: {p.max}
-          </li>
-        ))}
-      </ul>
-
-      <h2>👾 Количество игр</h2>
-      <ul>
-        {sortBy("games").map((p) => (
-          <li key={p.name}>
-            {p.name}: {p.games}
+            <strong>{p.name}</strong>: игр: {p.games}, ср. результат: {p.average}, рекорд: {p.max}
           </li>
         ))}
       </ul>
