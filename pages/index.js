@@ -13,8 +13,10 @@ export default function Home() {
         const names = Object.keys(data.columns);
         const processed = names.map((name) => {
           const scores = data.columns[name]
-            .map((v) => parseInt(v))
-            .filter((v) => !isNaN(v));
+            .filter((v) => v !== "" && v !== null && v !== undefined) // исключаем пустые строки
+.map((v) => parseInt(v))                                  // преобразуем в число
+.filter((v) => !isNaN(v));                                 // фильтруем плохие числа
+
 
           const totalGames = scores.length;
           const average = totalGames ? (scores.reduce((a, b) => a + b, 0) / totalGames).toFixed(1) : 0;
