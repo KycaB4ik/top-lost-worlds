@@ -4,7 +4,7 @@ export default function Home() {
   const [players, setPlayers] = useState([]);
 
   useEffect(() => {
-    fetch("https://gsx2json.com/api?id=1ohEkz-AFToTFeiP6q4uZP_JUZtBgxToiBuNVlpk7wL0&sheet=top")
+   fetch('/api/stats')
       .then((res) => res.json())
       .then((data) => {
         if (!data.columns) return;
