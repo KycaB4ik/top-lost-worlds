@@ -1,77 +1,23 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react';
 
 export default function Home() {
-  const [players, setPlayers] = useState([]);
+  const [data, setData] = useState(null);
 
   useEffect(() => {
-   fetch('/api/stats')
+    fetch("https://gsx2json.com/api?id=1ohEkz-AFToFTeiP6q4uZP_JUZtBgxToiBuNVlpK7wL0&sheet=top")
       .then((res) => res.json())
-      .then((data) => {
-        if (!data.columns) return;
-
-        const processed = Object.entries(data.columns).map(([name, rawScores]) => {
-          // Оставляем только строки, которые состоят из цифр (то есть — очки)
-          const scores = rawScores
-            .filter((v) => /^\d+$/.test(v))
-            .map((v) => parseInt(v));
-
-          const games = scores.length;
-          const average = games
-            ? (scores.reduce((a, b) => a + b, 0) / games).toFixed(1)
-            : 0;
-          const max = Math.max(...scores, 0);
-
-          return {
-            name,
-            games,
-            average: parseFloat(average),
-            max,
-          };
-        });
-
-        setPlayers(processed);
-      });
+      .then((json) => {
+        console.log("📊 Полученные данные:", json);
+        setData(json);
+      })
+      .catch((error) => console.error("❌ Ошибка при загрузке:", error));
   }, []);
 
-  // Универсальная сортировка по ключу
-  const sortBy = (key) => [...players].sort((a, b) => b[key] - a[key]);
-
   return (
-    <div style={{ padding: 20, fontFamily: "sans-serif" }}>
-      <h1 style={{ textAlign: "center" }}>🌍 TOP Lost Worlds</h1>
-
-      <section>
-        <h2>📊 Средний результат</h2>
-        <ol>
-          {sortBy("average").map((p) => (
-            <li key={p.name}>
-              {p.name}: {p.average}
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section>
-        <h2>🏆 Рекорды</h2>
-        <ol>
-          {sortBy("max").map((p) => (
-            <li key={p.name}>
-              {p.name}: {p.max}
-            </li>
-          ))}
-        </ol>
-      </section>
-
-      <section>
-        <h2>🎮 Количество игр</h2>
-        <ol>
-          {sortBy("games").map((p) => (
-            <li key={p.name}>
-              {p.name}: {p.games}
-            </li>
-          ))}
-        </ol>
-      </section>
+    <div style={{ padding: 20, fontFamily: 'sans-serif' }}>
+      <h1 style={{ textAlign: 'center' }}>TOP Lost Worlds</h1>
+      {!data && <p>Загрузка...</p>}
+      {data && <pre>{JSON.stringify(data, null, 2)}</pre>}
     </div>
   );
 }
