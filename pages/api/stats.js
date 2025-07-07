@@ -1,5 +1,5 @@
 export default async function handler(req, res) {
-  const url = 'https://gsx2json.com/api?id=1ohEkz-AFToTFeiP6q4uZP_JUZtBgxToiBuNVlpk7wL0&sheet=Лист%201';
+  const url = 'https://gsx2json.com/api?id=1ohEkz-AFToTFeiP6q4uZP_JUZtBgxToiBuNVlpk7wL0&sheet=top';
 
   try {
     const response = await fetch(url);
