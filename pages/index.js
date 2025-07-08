@@ -4,7 +4,7 @@ export default function Home() {
   const [data, setData] = useState(null);
 
   useEffect(() => {
-    fetch("https://gsx2json.com/api?id=1ohEkz-AFToFTeiP6q4uZP_JUZtBgxToiBuNVlpK7wL0&sheet=top")
+    fetch("https://gsx2json.com/api?id=1ohekz-AFToTFeiP6q4uZP_JUZtBgxI0iBuNVlpk7wL0&sheet=top")
       .then((res) => res.json())
       .then((json) => {
         console.log("📊 Полученные данные:", json);
