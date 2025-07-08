@@ -11,9 +11,10 @@ export default function Home() {
 
         const processed = Object.entries(data.columns).map(([name, rawScores]) => {
           // Оставляем только строки, которые состоят из цифр (то есть — очки)
-          const scores = rawScores
-            .filter((v) => /^\d+$/.test(v))
-            .map((v) => parseInt(v));
+         const scores = rawScores
+  .filter((v) => /^\d+$/.test(v)) // только строки, состоящие из цифр
+  .map((v) => parseInt(v));
+
 
           const games = scores.length;
           const average = games
