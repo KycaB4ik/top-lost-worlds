@@ -11,8 +11,9 @@ export default function Home() {
 
         const processed = Object.entries(data.columns).map(([name, rawScores]) => {
   const scores = rawScores
-    .filter((v) => v !== null && v !== undefined && v !== "" && !isNaN(v))
-    .map((v) => parseInt(v));
+    .slice(1) // пропустить первую строку (заголовок)
+    .filter((v) => v !== "" && v !== null && v !== undefined && !isNaN(v))
+    .map((v) => Number(v));
 
   const games = scores.length;
   const average = games
@@ -27,6 +28,7 @@ export default function Home() {
     max,
   };
 });
+
 
 
         setPlayers(processed);
