@@ -10,26 +10,23 @@ export default function Home() {
         if (!data.columns) return;
 
         const processed = Object.entries(data.columns).map(([name, rawScores]) => {
-  const scores = rawScores
-  .filter((v) => v.trim().toLowerCase() !== 'n' && /^\d+$/.test(v))
-  .map((v) => parseInt(v));
+          const scores = rawScores
+            .filter((v) => v && v.trim().toLowerCase() !== 'n' && /^\d+$/.test(v.trim()))
+            .map((v) => parseInt(v.trim()));
 
+          const games = scores.length;
+          const average = games
+            ? (scores.reduce((a, b) => a + b, 0) / games).toFixed(1)
+            : 0;
+          const max = Math.max(...scores, 0);
 
-  const games = scores.length;
-  const average = games
-    ? (scores.reduce((a, b) => a + b, 0) / games).toFixed(1)
-    : 0;
-  const max = Math.max(...scores, 0);
-
-  return {
-    name,
-    games,
-    average: parseFloat(average),
-    max,
-  };
-});
-
-
+          return {
+            name,
+            games,
+            average: parseFloat(average),
+            max,
+          };
+        });
 
         setPlayers(processed);
       });
