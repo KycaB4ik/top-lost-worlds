@@ -10,10 +10,9 @@ export default function Home() {
         if (!data.columns) return;
 
         const processed = Object.entries(data.columns).map(([name, rawScores]) => {
-          // Фильтруем только настоящие числовые значения (без пробелов, букв и пустых ячеек)
           const scores = rawScores
-            .map((v) => v.trim())
-            .filter((v) => v !== "" && !isNaN(v))
+            .map((v) => typeof v === "string" ? v.trim() : v) // убираем пробелы, если строка
+            .filter((v) => v !== "" && !isNaN(v)) // только непустые числа
             .map((v) => parseInt(v));
 
           const games = scores.length;
