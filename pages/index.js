@@ -10,24 +10,24 @@ export default function Home() {
         if (!data.columns) return;
 
         const processed = Object.entries(data.columns).map(([name, rawScores]) => {
-          const scores = rawScores
-            .map((v) => typeof v === "string" ? v.trim() : v) // убираем пробелы, если строка
-            .filter((v) => v !== "" && !isNaN(v)) // только непустые числа
-            .map((v) => parseInt(v));
+  const scores = rawScores
+    .filter((v) => v !== null && v !== undefined && v !== "" && !isNaN(v))
+    .map((v) => parseInt(v));
 
-          const games = scores.length;
-          const average = games
-            ? (scores.reduce((a, b) => a + b, 0) / games).toFixed(1)
-            : 0;
-          const max = Math.max(...scores, 0);
+  const games = scores.length;
+  const average = games
+    ? (scores.reduce((a, b) => a + b, 0) / games).toFixed(1)
+    : 0;
+  const max = Math.max(...scores, 0);
 
-          return {
-            name,
-            games,
-            average: parseFloat(average),
-            max,
-          };
-        });
+  return {
+    name,
+    games,
+    average: parseFloat(average),
+    max,
+  };
+});
+
 
         setPlayers(processed);
       });
