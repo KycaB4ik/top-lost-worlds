@@ -10,11 +10,11 @@ export default function Home() {
         if (!data.columns) return;
 
         const processed = Object.entries(data.columns).map(([name, rawScores]) => {
-          // Оставляем только строки, которые состоят из цифр (то есть — очки)
-         const scores = rawScores
-  .filter((v) => /^\d+$/.test(v)) // только строки, состоящие из цифр
-  .map((v) => parseInt(v));
-
+          // Фильтруем только настоящие числовые значения (без пробелов, букв и пустых ячеек)
+          const scores = rawScores
+            .map((v) => v.trim())
+            .filter((v) => v !== "" && !isNaN(v))
+            .map((v) => parseInt(v));
 
           const games = scores.length;
           const average = games
@@ -34,7 +34,6 @@ export default function Home() {
       });
   }, []);
 
-  // Универсальная сортировка по ключу
   const sortBy = (key) => [...players].sort((a, b) => b[key] - a[key]);
 
   return (
