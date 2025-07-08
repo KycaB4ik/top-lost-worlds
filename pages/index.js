@@ -10,9 +10,13 @@ export default function Home() {
         if (!data.columns) return;
 
         const processed = Object.entries(data.columns).map(([name, rawScores]) => {
-          const scores = rawScores
-            .filter((v) => v && v.trim().toLowerCase() !== 'n' && /^\d+$/.test(v.trim()))
-            .map((v) => parseInt(v.trim()));
+         const scores = rawScores
+  .filter((v) => {
+    const str = String(v).trim().toLowerCase();
+    return str !== 'n' && /^\d+$/.test(str);
+  })
+  .map((v) => parseInt(v));
+
 
           const games = scores.length;
           const average = games
