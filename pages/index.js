@@ -1,84 +1,77 @@
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>TOP Lost Worlds</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      display: flex;
-      justify-content: center;
-      padding: 20px;
-    }
-    .container {
-      max-width: 600px;
-    }
-    h1 {
-      text-align: center;
-    }
-    h2 {
-      margin-top: 40px;
-    }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <h1>TOP Lost Worlds</h1>
-    <div id="results"></div>
-  </div>
+import { useEffect, useState } from "react";
 
-  <script>
-    const SHEET_ID = "1ohekz-AFToTFeiP6q4uZP_JUZtBgxI0iBuNVlpk7wL0"; // например: 1ohEkz-AFToFTeiP6q4uZP_JUZtBgxToiBuNVlpK7wL0
-    const SHEET_NAME = "top";
+export default function Home() {
+  const [players, setPlayers] = useState([]);
 
-    fetch(`https://gsx2json.com/api?id=${SHEET_ID}&sheet=${SHEET_NAME}`)
-      .then(r => r.json())
-      .then(data => {
-        if (!data.rows) throw new Error("Нет данных");
+  useEffect(() => {
+    fetch("https://gsx2json.com/api?id=1ohekz-AFToTFeiP6q4uZP_JUZtBgxI0iBuNVlpk7wL0&sheet=top")
+      .then((res) => res.json())
+      .then((data) => {
+        if (!data.columns) return;
 
-        const stats = {};
-        data.rows.forEach(row => {
-          for (let name in row) {
-            const value = Number(row[name]);
-            if (!isNaN(value)) {
-              if (!stats[name]) stats[name] = [];
-              stats[name].push(value);
-            }
-          }
+        const processed = Object.entries(data.columns).map(([name, rawScores]) => {
+          // Оставляем только строки, которые состоят из цифр (то есть — очки)
+          const scores = rawScores
+            .filter((v) => /^\d+$/.test(v))
+            .map((v) => parseInt(v));
+
+          const games = scores.length;
+          const average = games
+            ? (scores.reduce((a, b) => a + b, 0) / games).toFixed(1)
+            : 0;
+          const max = Math.max(...scores, 0);
+
+          return {
+            name,
+            games,
+            average: parseFloat(average),
+            max,
+          };
         });
 
-        const average = {};
-        const max = {};
-        const count = {};
-
-        for (let name in stats) {
-          const values = stats[name];
-          const sum = values.reduce((a, b) => a + b, 0);
-          average[name] = +(sum / values.length).toFixed(1);
-          max[name] = Math.max(...values);
-          count[name] = values.length;
-        }
-
-        const resultsDiv = document.getElementById("results");
-
-        const section = (title, object) => {
-          const sorted = Object.entries(object).sort((a, b) => b[1] - a[1]);
-          return `
-            <h2>${title}</h2>
-            <ul>
-              ${sorted.map(([name, value]) => `<li>${name}: ${value}</li>`).join('')}
-            </ul>
-          `;
-        };
-
-        resultsDiv.innerHTML =
-          section("🏆 Средний результат", average) +
-          section("📈 Рекорды", max) +
-          section("👾 Количество игр", count);
-      })
-      .catch(err => {
-        document.getElementById("results").innerHTML = `<pre>${err}</pre>`;
+        setPlayers(processed);
       });
-  </script>
-</body>
-</html>
+  }, []);
+
+  // Универсальная сортировка по ключу
+  const sortBy = (key) => [...players].sort((a, b) => b[key] - a[key]);
+
+  return (
+    <div style={{ padding: 20, fontFamily: "sans-serif" }}>
+      <h1 style={{ textAlign: "center" }}>🌍 TOP Lost Worlds</h1>
+
+      <section>
+        <h2>📊 Средний результат</h2>
+        <ol>
+          {sortBy("average").map((p) => (
+            <li key={p.name}>
+              {p.name}: {p.average}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section>
+        <h2>🏆 Рекорды</h2>
+        <ol>
+          {sortBy("max").map((p) => (
+            <li key={p.name}>
+              {p.name}: {p.max}
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <section>
+        <h2>🎮 Количество игр</h2>
+        <ol>
+          {sortBy("games").map((p) => (
+            <li key={p.name}>
+              {p.name}: {p.games}
+            </li>
+          ))}
+        </ol>
+      </section>
+    </div>
+  );
+}
